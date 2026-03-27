@@ -1,0 +1,45 @@
+name: 'Publish Tauri App'
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      - name: Build and Release Tauri App
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # アプリケーションのバージョン（tauri.conf.jsonなどから自動取得）をタグ名にします
+          tagName: v__VERSION__
+          releaseName: 'Performance Insights v__VERSION__'
+          releaseBody: 'Windows向けのバイナリ (.exe / .msi) はこちらからダウンロードできます。'
+          # いきなり公開せず、まずは「下書き（Draft）」としてReleasesに保存します
+          releaseDraft: true
+          prerelease: false
