@@ -43,5 +43,5 @@ jobs:
           releaseName: 'Performance Insights v__VERSION__'
           releaseBody: 'Windows向けのバイナリ (.exe / .msi) はこちらからダウンロードできます。'
           # いきなり公開せず、まずは「下書き（Draft）」としてReleasesに保存します
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
